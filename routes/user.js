@@ -15,12 +15,15 @@ const limiter = rateLimit({
 
 /*************-Signup-********** */
 
+
+
 router.post("/signup", async (req, res, next) => {
   try {
-    const emailExists = await User.exists({ email: req.body.email });
-    if (emailExists) {
+    const phoneExists = await User.exists({ phone: req.body.phone });
+    if (phoneExists) {
       return res.status(409).json({
-        message: "Email already exists.",
+        error: 'phone already exists.',
+        message: 'phone already exists.',
       });
     }
 
@@ -28,6 +31,7 @@ router.post("/signup", async (req, res, next) => {
     const user = new User({
       name: req.body.name,
       email: req.body.email,
+      phone: req.body.phone,
       password: hash,
     });
     const result = await user.save();
@@ -47,10 +51,10 @@ router.post("/signup", async (req, res, next) => {
 router.post("/login", limiter, (req, res, next) => {
   let fetchedUser;
 
-  User.findOne({ email: req.body.email })
+  User.findOne({ phone: req.body.phone })
     .then((user) => {
       if (!user) {
-        throw new Error("Incorrect email or password!");
+        throw new Error("Incorrect phone or password!");
       }
 
       fetchedUser = user;
@@ -58,11 +62,11 @@ router.post("/login", limiter, (req, res, next) => {
     })
     .then((result) => {
       if (!result) {
-        throw new Error("Incorrect email or password!");
+        throw new Error("Incorrect phone or password!");
       }
 
       const token = jwt.sign(
-        { email: fetchedUser.email, userId: fetchedUser._id },
+        { email: fetchedUser.phone, userId: fetchedUser._id },
         "secret_this_should_be_longer_secret_this_should_be_longer_",
         { expiresIn: "1h" }
       );
@@ -80,7 +84,7 @@ router.post("/login", limiter, (req, res, next) => {
       console.error("Authentication error:", err);
 
       res.status(401).json({
-        message: "Authentication failed. Incorrect email or password.",
+        message: "Authentication failed. Incorrect phone or password.",
       });
     });
 });

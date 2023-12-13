@@ -33,4 +33,20 @@ router.post("/restaurants", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+//Route pour get restaurant 
+
+// Route pour récupérer tous les restaurants
+router.get("/restaurants/:id", async (req, res) => {
+    try {
+      const restaurant = await Restaurant.findById(req.params.id);
+      if (!restaurant) {
+        // Si aucun restaurant n'est trouvé avec l'ID spécifié
+        return res.status(404).json({ message: "Restaurant non trouvé." });
+      }
+      res.status(200).json(restaurant);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 module.exports = router;

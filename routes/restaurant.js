@@ -5,48 +5,43 @@ const router = express.Router();
 // Route pour ajouter un restaurant
 router.post("/restaurants", async (req, res) => {
   try {
-    const {
-      ownerId,
-      cin,
-      bannerImg,
-      mainImg,
-      nameR,
-      descriptionR,
-      location,
-      contact,
-    } = req.body;
+    const { ownerId, cin, nameR, location, contact } = req.body;
 
-    const restaurant = new Restaurant({
+    // Validate ownerId as a valid ObjectId
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(ownerId);
+    if (!isValidObjectId) {
+      return res.status(400).json({ error: "Invalid ownerId" });
+    }
+
+    // Create a new restaurant
+    const newRestaurant = new Restaurant({
       ownerId: ownerId,
       cin: cin,
-      bannerImg: bannerImg,
-      mainImg: mainImg,
       nameR: nameR,
-      descriptionR: descriptionR,
       location: location,
       contact: contact,
     });
 
-    const nouvelRestaurant = restaurant.save();
-    res.status(201).json(nouvelRestaurant);
+    // Save the restaurant to the database
+    const savedRestaurant = await newRestaurant.save();
+
+    res.status(201).json(savedRestaurant);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-//Route pour get restaurant 
-
 // Route pour récupérer tous les restaurants
-router.get("/restaurants/:id", async (req, res) => {
-    try {
-      const restaurant = await Restaurant.findById(req.params.id);
-      if (!restaurant) {
-        // Si aucun restaurant n'est trouvé avec l'ID spécifié
-        return res.status(404).json({ message: "Restaurant non trouvé." });
-      }
-      res.status(200).json(restaurant);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+router.get("/restaurant/:id", async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) {
+      // Si aucun restaurant n'est trouvé avec l'ID spécifié
+      return res.status(404).json({ message: "Restaurant non trouvé." });
     }
-  });
+    res.status(200).json(restaurant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 module.exports = router;

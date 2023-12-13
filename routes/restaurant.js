@@ -2,30 +2,41 @@ const express = require("express");
 const Restaurant = require("../models/resataurant");
 const router = express.Router();
 
-// Route pour ajouter un restaurant
 router.post("/restaurants", async (req, res) => {
   try {
-    const { ownerId, cin, nameR, location, contact } = req.body;
+    const {
+      ownerId,
+      cin,
+      bannerImg,
+      mainImg,
+      nameR,
+      descriptionR,
+      location,
+      contact,
+    } = req.body;
 
-    // Validate ownerId as a valid ObjectId
-    const isValidObjectId = mongoose.Types.ObjectId.isValid(ownerId);
-    if (!isValidObjectId) {
-      return res.status(400).json({ error: "Invalid ownerId" });
-    }
-
-    // Create a new restaurant
+    // Create a new restaurant instance
     const newRestaurant = new Restaurant({
-      ownerId: ownerId,
-      cin: cin,
-      nameR: nameR,
-      location: location,
-      contact: contact,
+      ownerId,
+      cin,
+      bannerImg,
+      mainImg,
+      nameR,
+      descriptionR,
+      location,
+      contact,
     });
 
     // Save the restaurant to the database
     const savedRestaurant = await newRestaurant.save();
 
-    res.status(201).json(savedRestaurant);
+    // Return the created restaurant's ID in the response
+    res
+      .status(201)
+      .json({
+        message: "Restaurant saved successfully",
+        restaurantId: savedRestaurant._id,
+      });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

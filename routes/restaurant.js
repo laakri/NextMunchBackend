@@ -47,7 +47,6 @@ router.get("/restaurant/:id", async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
-      // Si aucun restaurant n'est trouvé avec l'ID spécifié
       return res.status(404).json({ message: "Restaurant non trouvé." });
     }
     res.status(200).json(restaurant);

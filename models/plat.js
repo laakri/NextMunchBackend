@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const User = require("./user");
 
 
-const restaurantSchema = mongoose.Schema({
+const platSchema = mongoose.Schema({
 
   nameP: { type: String , required: true},  
   descriptionP: { type: String  , required: true},
@@ -17,4 +16,4 @@ const restaurantSchema = mongoose.Schema({
 
 
 
-module.exports = mongoose.model("Restaurant", restaurantSchema);
+module.exports = mongoose.model("Plat", platSchema);

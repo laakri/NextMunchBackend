@@ -38,8 +38,8 @@ router.post("/plat", upload.single('imgP'), async (req, res) => {
       message: "Plat saved successfully",
       platId: savedPlat._id,
       imgPath: imgP ? path.join('plat-images', imgP) : null, // Provide the full path if an image was uploaded
-    });
-  } catch (error) {
+
+  } )}catch (error) {
     // If an error occurs, log the error and respond with a 500 status code and an error message
     console.error("Error saving plat:", error);
     res.status(500).json({ error: error.message });
@@ -47,6 +47,7 @@ router.post("/plat", upload.single('imgP'), async (req, res) => {
 });
 
 router.put("/plats/:id", async (req, res) => {
+
   const platId = req.params.id;
   const updateData = req.body;
 

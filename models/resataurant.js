@@ -17,6 +17,7 @@ const restaurantSchema = mongoose.Schema(
     descriptionR: { type: String },
     location: { type: String, required: true },
     contact: { type: String, required: true },
+    
   },
   { timestamps: true }
 );

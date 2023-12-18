@@ -26,7 +26,6 @@ mongoose
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use("/file-folder", express.static(path.join("file-folder")));
 app.use("/uploads", express.static(path.join("uploads")));
 
 app.use((req, res, next) => {

@@ -54,4 +54,30 @@ router.get("/restaurant/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+router.get('/list', async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find().populate('ownerId', 'name email');
+    res.json(restaurants);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/delete/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    await Restaurant.findByIdAndDelete(id);
+
+    res.status(200).json({ message: 'Restaurant deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting restaurant', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 module.exports = router;

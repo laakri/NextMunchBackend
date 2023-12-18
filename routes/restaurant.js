@@ -112,7 +112,14 @@ router.get("/liste-categ/:restaurantId", async (req, res) => {
   }
 });
 
-// fma list nzidha baad manaamil push 5ater jetni ne9sa f pull
+router.get('/list', async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find().populate('ownerId', 'name email');
+    res.json(restaurants);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 router.delete('/delete/:id', async (req, res) => {
   try {
     const { id } = req.params;

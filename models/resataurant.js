@@ -17,6 +17,8 @@ const restaurantSchema = mongoose.Schema(
     descriptionR: { type: String },
     location: { type: String, required: true },
     contact: { type: String, required: true },
+    openDates: [{ type: String }],
+    closeDates: [{ type: String }],
   },
   { timestamps: true }
 );

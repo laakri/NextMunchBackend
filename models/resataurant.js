@@ -18,6 +18,8 @@ const restaurantSchema = mongoose.Schema(
     location: { type: String, required: true },
     contact: { type: String, required: true },
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
+    openDates: { type: String },
+    closeDates: { type: String },
   },
   { timestamps: true }
 );

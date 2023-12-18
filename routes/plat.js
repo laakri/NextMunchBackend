@@ -68,4 +68,17 @@ router.put("/plats/:id", async (req, res) => {
   }
 });
 
+router.get("/liste-plats", async (req, res) => {
+  try {
+    // Fetch all plats from the database
+    const plats = await Plat.find();
+
+    // Send the list of plats as a response
+    res.status(200).json(plats);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 module.exports = router;

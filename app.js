@@ -45,8 +45,11 @@ app.use((req, res, next) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/restos", restaurantRoutes);
-app.use("/api/categorie", categorieRoutes);
+
+app.use("/api/categories", categorieRoutes);
+
 app.use("/api/plats", platRoutes);
+
 app.use("/api/events", eventRoutes);
 
 module.exports = app;

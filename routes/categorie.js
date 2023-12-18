@@ -4,6 +4,8 @@ const router = express.Router();
 const multer = require('multer'); // For handling file uploads
 const path = require('path');
 
+
+
 // Multer configuration for handling file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -35,6 +37,16 @@ router.post('/add', upload.single('imgCat'), (req, res) => {
     .catch(error => {
       res.status(500).json({ error: error.message });
     });
+});
+
+router.get("/liste-categ",async(req,res)=>{
+  try{
+    const categories=await Categorie.find();
+
+    res.status(200).json(categories);
+  }catch(error){
+    res.status(500).json({error:error.message});
+  }
 });
 
 module.exports = router;

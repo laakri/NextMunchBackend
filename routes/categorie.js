@@ -7,6 +7,7 @@ const path = require('path');
 // Resolve the absolute path for the destination directory
 const uploadDir = path.join(__dirname, '../../NextMunch/src/assets/images/categories');
 
+
 // Multer configuration for handling file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -46,7 +47,6 @@ router.get('/list', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 router.post('/delete', async (req, res) => {
   const { categoryIds } = req.body;
 
@@ -56,6 +56,15 @@ router.post('/delete', async (req, res) => {
     res.json({ message: 'Categories deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+router.get("/liste-categ",async(req,res)=>{
+  try{
+    const categories=await Categorie.find();
+
+    res.status(200).json(categories);
+  }catch(error){
+    res.status(500).json({error:error.message});
   }
 });
 

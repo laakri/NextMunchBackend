@@ -27,6 +27,7 @@ mongoose
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/file-folder", express.static(path.join("file-folder")));
+app.use("/uploads", express.static(path.join("uploads")));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -45,8 +46,11 @@ app.use((req, res, next) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/restos", restaurantRoutes);
-app.use("/api/categorie", categorieRoutes);
+
+app.use("/api/categories", categorieRoutes);
+
 app.use("/api/plats", platRoutes);
+
 app.use("/api/events", eventRoutes);
 
 module.exports = app;

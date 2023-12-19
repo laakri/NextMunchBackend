@@ -7,6 +7,7 @@ const { promisify } = require("util");
 const fs = require("fs");
 const unlinkAsync = promisify(fs.unlink);
 const path = require("path");
+const { log } = require("console");
 
 router.post(
   "/restaurants/:restaurantId/ajouter-categories",
@@ -186,5 +187,72 @@ router.patch(
     }
   }
 );
+
+/*
+router.get('/listRestoByCategory', async (req, res) => {
+  try {
+    const { categories } = req.query;
+
+    if (!categories || categories.length === 0) {
+      return res.status(400).json({ error: 'Categories parameter is required.' });
+    }
+
+    // Convert the categories parameter to an array if it's a string
+    const categoriesArray = Array.isArray(categories) ? categories : categories.split(',');
+
+    const query = {
+      categories: { $all: categoriesArray },
+    };
+
+    console.log('query', query);
+
+    const restaurants = await Restaurant.find(query);
+    res.json(restaurants);
+  } catch (error) {
+    console.error('Error fetching restaurants by category', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});*/
+/*
+router.get('/listRestoSearch', async (req, res) => {
+
+  const searchTerm = req.query.q;
+
+  try {
+    const results = await Restaurant.find({ nameR: { $regex: searchTerm, $options: 'i' } });
+    res.json(results);
+  } catch (error) {
+    console.error('Error searching restaurants:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+*/
+router.get('/listRestoBySearch', async (req, res) => {
+  const { name, categories } = req.query;
+  try {
+    let query = {};
+    if (name) {
+      query.nameR = { $regex: name, $options: 'i' };    }
+
+    if (categories && categories.length > 0) {
+      const categoriesArray = Array.isArray(categories) ? categories : categories.split(',');
+      query.categories = { $all: categoriesArray };
+    }
+
+    if (Object.keys(query).length === 0) {
+      return res.status(400).json({ error: 'Name or categories are required.' });
+    }
+
+    console.log('query', query);
+
+    const restaurants = await Restaurant.find(query);
+    res.json(restaurants);
+  } catch (error) {
+    console.error('Error fetching restaurants by search', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 module.exports = router;

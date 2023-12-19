@@ -5,12 +5,21 @@ const restaurantSchema = mongoose.Schema(
   {
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: User },
     cin: { type: Number, required: true },
-    bannerImg: { type: String },
-    mainImg: { type: String },
+    bannerImg: {
+      type: String,
+      default: "../../../assets/defaultBanner.png",
+    },
+    mainImg: {
+      type: String,
+      default: "../../../assets/defaultMain.png",
+    },
     nameR: { type: String, required: true },
     descriptionR: { type: String },
     location: { type: String, required: true },
     contact: { type: String, required: true },
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+    openDates: { type: String },
+    closeDates: { type: String },
   },
   { timestamps: true }
 );

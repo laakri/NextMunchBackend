@@ -124,19 +124,34 @@ router.post("/change-password", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+/*************-Get Users-********** */
+
+router.get("/users", async (req, res, next) => {
+  try {
+    const users = await User.find({ }, { name: true, phone: true, email: true, roles: true }).populate();
+    res.status(200).json({ users });
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 /***************-Delete-*******************/
 
 router.delete("/delete/:id", async (req, res, next) => {
   try {
+    console.log("Deleting user with ID:", req.params.id); // Add this line
     await User.findByIdAndDelete(req.params.id);
     res.status(200).json({
-      message: "User Deleted seccesfully !",
+      message: "User Deleted successfully!",
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       error: err,
     });
   }
 });
+
+ 
 module.exports = router;

@@ -1,27 +1,30 @@
 const express = require("express");
 const Plat = require("../models/plat");
 const router = express.Router();
-const multer = require('multer'); // For handling file uploads
-const path = require('path');
+const multer = require("multer"); // For handling file uploads
+const path = require("path");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/plat-images'); // Change the destination folder
+    cb(null, "uploads/plat-images"); // Change the destination folder
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
-  }
+  },
 });
 
 const upload = multer({ storage: storage });
 
-
-router.post("/plat", upload.single('imgP'), async (req, res) => {
+router.post("/plat", upload.single("imgP"), async (req, res) => {
   try {
-    const { nameP, descriptionP, categoryP, priceP } = req.body;
-    const imgP = req.file ? req.file.filename : null; // Check if a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded." });
+    }
 
-    // Create a new Plat instance
+    const url = req.protocol + "://" + req.get("host");
+    let imgP = url + "/uploads/plat-images/" + req.file.filename;
+    const { nameP, descriptionP, categoryP, priceP } = req.body;
+
     const newPlat = new Plat({
       nameP,
       descriptionP,
@@ -30,24 +33,20 @@ router.post("/plat", upload.single('imgP'), async (req, res) => {
       priceP,
     });
 
-    // Save the new plat to the database
     const savedPlat = await newPlat.save();
 
-    // Respond with a success message, the ID of the saved plat, and the file path
     res.status(201).json({
       message: "Plat saved successfully",
       platId: savedPlat._id,
-      imgPath: imgP ? path.join('plat-images', imgP) : null, // Provide the full path if an image was uploaded
-
-  } )}catch (error) {
-    // If an error occurs, log the error and respond with a 500 status code and an error message
+      imgPath: imgP ? path.join("plat-images", imgP) : null,
+    });
+  } catch (error) {
     console.error("Error saving plat:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 router.put("/plats/:id", async (req, res) => {
-
   const platId = req.params.id;
   const updateData = req.body;
 
@@ -79,6 +78,5 @@ router.get("/liste-plats", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 module.exports = router;

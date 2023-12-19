@@ -80,5 +80,47 @@ router.get("/liste-plats", async (req, res) => {
   }
 });
 
+//delete an array of plat 
+router.post('/deleteArrayP', async (req, res) => {
+  try {
+    const { platIds } = req.body;
+
+    if (!platIds || !Array.isArray(platIds) || platIds.length === 0) {
+      return res.status(400).json({ message: 'Invalid plat IDs provided.' });
+    }
+    const result = await Plat.deleteMany({ _id: { $in: platIds } });
+
+    res.status(200).json({
+      message: 'Plats deleted successfully.',
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error('Error deleting plats:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+//set an array of plat hidden
+router.post('/setPlatHidden', async (req, res) => {
+  try {
+    const { platIds } = req.body;
+
+    if (!platIds || !Array.isArray(platIds)) {
+      return res.status(400).json({ message: 'Invalid platIds array' });
+    }
+
+    const updateResult = await Plat.updateMany(
+      { _id: { $in: platIds } },
+      { $set: { hidden: true } }
+    );
+
+    return res.json({
+      message: 'Plats sitten hidden ',
+      updatedCount: updateResult.nModified
+    });
+  } catch (error) {
+    console.error('Error in setting hidden for plats:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 module.exports = router;

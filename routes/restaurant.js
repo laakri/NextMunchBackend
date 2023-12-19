@@ -8,58 +8,49 @@ const fs = require("fs");
 const unlinkAsync = promisify(fs.unlink);
 const path = require("path");
 
-router.post('/restaurants/:restaurantId/ajouter-categories', async (req, res) => {
-  try {
-    const restaurantId = req.params.restaurantId;
-    const categorieId = req.body.categorie;
-    
-    // Find the existing restaurant
-    const existingRestaurant = await Restaurant.findById(restaurantId);
+router.post(
+  "/restaurants/:restaurantId/ajouter-categories",
+  async (req, res) => {
+    try {
+      const restaurantId = req.params.restaurantId;
+      const categorieId = req.body.categorie;
 
-    // Check if the restaurant exists
-    if (!existingRestaurant) {
-      return res.status(404).json({ message: "Restaurant non trouvé." });
+      // Find the existing restaurant
+      const existingRestaurant = await Restaurant.findById(restaurantId);
+
+      // Check if the restaurant exists
+      if (!existingRestaurant) {
+        return res.status(404).json({ message: "Restaurant non trouvé." });
+      }
+
+      // Add the category to the list of categories of the restaurant
+      if (categorieId) {
+        existingRestaurant.categories.push(categorieId);
+      }
+
+      // Save the changes to the database
+      const updatedRestaurant = await existingRestaurant.save();
+
+      res.status(200).json({
+        message: "Catégorie ajoutée avec succès au restaurant.",
+        updatedRestaurant,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: error.message });
     }
-
-    // Add the category to the list of categories of the restaurant
-    if (categorieId) {
-      existingRestaurant.categories.push(categorieId);
-    }
-
-    // Save the changes to the database
-    const updatedRestaurant = await existingRestaurant.save();
-
-
-    res.status(200).json({
-      message: "Catégorie ajoutée avec succès au restaurant.",
-      updatedRestaurant,
-    });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: error.message });
   }
-});
+);
 
 router.post("/restaurants", async (req, res) => {
   try {
-    const {
-      ownerId,
-      cin,
-      bannerImg,
-      mainImg,
-      nameR,
-      descriptionR,
-      location,
-      contact,
-      categories,
-    } = req.body;
+    const { ownerId, cin, nameR, descriptionR, location, contact, categories } =
+      req.body;
 
     // Create a new restaurant instance
     const newRestaurant = new Restaurant({
       ownerId,
       cin,
-      bannerImg,
-      mainImg,
       nameR,
       descriptionR,
       location,
@@ -93,7 +84,6 @@ router.get("/restaurant/:id", async (req, res) => {
   }
 });
 
-
 router.get("/liste-categ/:restaurantId", async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
@@ -111,7 +101,6 @@ router.get("/liste-categ/:restaurantId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 router.get('/list', async (req, res) => {
   try {
     const restaurants = await Restaurant.find().populate('ownerId', 'name email');
@@ -120,23 +109,25 @@ router.get('/list', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-router.delete('/delete/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const restaurant = await Restaurant.findById(id);
-    if (!restaurant) {
-      return res.status(404).json({ message: 'Restaurant not found' });
+router.delete("/delete/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const restaurant = await Restaurant.findById(id);
+      if (!restaurant) {
+        return res.status(404).json({ message: "Restaurant not found" });
+      }
+  
+      await Restaurant.findByIdAndDelete(id);
+  
+      res.status(200).json({ message: "Restaurant deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting restaurant", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
+  });
 
-    await Restaurant.findByIdAndDelete(id);
 
-    res.status(200).json({ message: 'Restaurant deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting restaurant', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

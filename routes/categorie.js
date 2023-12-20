@@ -49,7 +49,6 @@ router.get('/list', async (req, res) => {
 });
 router.post('/delete', async (req, res) => {
   const { categoryIds } = req.body;
-
   try {
     // Assuming categoryIds is an array of category IDs to be deleted
     await Categorie.deleteMany({ _id: { $in: categoryIds } });

@@ -4,35 +4,54 @@ const Event = require("../models/event");
 const Restaurant = require("../models/resataurant");
 
 // Route to add an event for a restaurant
-router.post("/add-event", async (req, res) => {
+router.post("/addEvent", async (req, res) => {
   try {
-    const { restaurantId, price, numberOfPeople, platIds, startDate, endDate } =
-      req.body;
-
-    // Check if the restaurant exists
-    const restaurant = await Restaurant.findById(restaurantId);
-    if (!restaurant) {
-      return res.status(404).json({ message: "Restaurant not found." });
-    }
+    // Extract data from the request body
+    const {
+      restaurantId,
+      eventName,
+      eventPrice,
+      numberOfPersons,
+      platIds,
+      startDate,
+      endDate,
+      selectedImage,
+      totalPrice,
+    } = req.body;
 
     // Create a new event instance
     const newEvent = new Event({
       restaurantId,
-      price,
-      numberOfPeople,
+      eventName,
+      eventPrice,
+      numberOfPersons,
       platIds,
       startDate,
       endDate,
+      selectedImage,
+      totalPrice,
     });
 
     // Save the event to the database
-    await newEvent.save();
+    const savedEvent = await newEvent.save();
 
-    res.status(201).json({ message: "Event added successfully" });
+    res.status(201).json(savedEvent);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+// GET events for a specific restaurant ID
+router.get("/getEvents/:restaurantId", async (req, res) => {
+  try {
+    const restaurantId = req.params.restaurantId;
 
+    const events = await Event.find({ restaurantId });
+
+    res.json({ events });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 module.exports = router;

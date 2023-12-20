@@ -7,11 +7,14 @@ const eventSchema = mongoose.Schema(
       ref: "Restaurant",
       required: true,
     },
-    price: { type: Number, required: true },
-    numberOfPeople: { type: Number, required: true },
+    eventName: { type: String, required: true },
+    eventPrice: { type: Number, required: true },
+    numberOfPersons: { type: Number, required: true },
     platIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Plat" }],
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
+    selectedImage: { type: String, required: true },
+    totalPrice: { type: Number, required: true },
   },
   { timestamps: true }
 );

@@ -85,14 +85,14 @@ router.get("/restaurant/:id", async (req, res) => {
   }
 });
 
-router.get("/liste-categ/:restaurantId", async (req, res) => {
+router.get('/liste-categ/:restaurantId', async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
 
-    const restaurant = await Restaurant.findById(restaurantId);
+    const restaurant = await Restaurant.findById(restaurantId).populate('categories');
 
     if (!restaurant) {
-      return res.status(404).json({ message: "Restaurant not found." });
+      return res.status(404).json({ message: 'Restaurant not found.' });
     }
 
     const categories = restaurant.categories;
@@ -253,6 +253,9 @@ router.get('/listRestoBySearch', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
 
 
 module.exports = router;

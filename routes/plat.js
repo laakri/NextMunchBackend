@@ -78,7 +78,23 @@ router.get("/liste-plats", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+//get Plats Info an array of plat
+router.post("/getPlatsInfo", async (req, res) => {
+  try {
+    // Extract the array of plat IDs from the request body
+    const platIds = req.body.platIds;
 
+    // Find the plats with the specified IDs and select the required fields
+    const platsInfo = await Plat.find({ _id: { $in: platIds } }).select(
+      "nameP descriptionP imgP priceP"
+    );
+
+    res.json({ platsInfo });
+  } catch (error) {
+    console.error("Error fetching plat information:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
 //delete an array of plat
 router.post("/deleteArrayP", async (req, res) => {
   try {

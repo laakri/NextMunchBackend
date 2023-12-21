@@ -254,35 +254,6 @@ router.get('/listRestoBySearch', async (req, res) => {
   }
 });
 
-router.post('/rating/:userId/:restoId', async (req, res) => {
-  const userId = req.params.userId;
-  const restoId = req.params.restoId;
-  const { rating } = req.body;
-
-  try {
-      let ratingEntry = await Rating.findOne({ userId, restoId });
-
-      if (!ratingEntry) {
-          ratingEntry = new Rating({
-              userId,
-              restoId,
-              ratings: [rating]
-          });
-      } else {
-          ratingEntry.ratings.push(rating);
-      }
-
-      const averageRating = ratingEntry.ratings.reduce((acc, val) => acc + val, 0) / ratingEntry.ratings.length;
-      await averageRating.save();
-
-      res.json({ message: 'Évaluation soumise avec succès.', averageRating });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erreur lors de la soumission de l\'évaluation.' });
-  }
-});
-
-
 
 
 

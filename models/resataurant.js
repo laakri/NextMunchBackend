@@ -20,10 +20,7 @@ const restaurantSchema = mongoose.Schema(
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "categorie" }],
     openDates: { type: String },
     closeDates: { type: String },
-    ratings: [{
-      userId: String,
-      rating: Number
-  }]
+   
   },
   { timestamps: true }
 );

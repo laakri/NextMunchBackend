@@ -8,6 +8,7 @@ const restaurantRoutes = require("./routes/restaurant");
 const categorieRoutes = require("./routes/categorie");
 const platRoutes = require("./routes/plat");
 const eventRoutes = require("./routes/event");
+const reviewsRoutes = require("./routes/reviews");
 const app = express();
 
 mongoose.set("strictQuery", false);
@@ -52,6 +53,6 @@ app.use("/api/categories", categorieRoutes);
 app.use("/api/plats", platRoutes);
 
 app.use("/api/events", eventRoutes);
-
+app.use("/api/reviews", reviewsRoutes);
 
 module.exports = app;

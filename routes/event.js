@@ -3,10 +3,8 @@ const router = express.Router();
 const Event = require("../models/event");
 const Restaurant = require("../models/resataurant");
 
-// Route to add an event for a restaurant
 router.post("/addEvent", async (req, res) => {
   try {
-    // Extract data from the request body
     const {
       restaurantId,
       eventName,
@@ -19,7 +17,6 @@ router.post("/addEvent", async (req, res) => {
       totalPrice,
     } = req.body;
 
-    // Create a new event instance
     const newEvent = new Event({
       restaurantId,
       eventName,
@@ -32,7 +29,6 @@ router.post("/addEvent", async (req, res) => {
       totalPrice,
     });
 
-    // Save the event to the database
     const savedEvent = await newEvent.save();
 
     res.status(201).json(savedEvent);

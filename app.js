@@ -8,7 +8,8 @@ const restaurantRoutes = require("./routes/restaurant");
 const categorieRoutes = require("./routes/categorie");
 const platRoutes = require("./routes/plat");
 const eventRoutes = require("./routes/event");
-const reviewsRoutes =require("./routes/reviews");
+const reviewsRoutes = require("./routes/reviews");
+const reservationRoutes = require("./routes/reservation");
 
 const app = express();
 
@@ -48,13 +49,10 @@ app.use((req, res, next) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/restos", restaurantRoutes);
-
 app.use("/api/categories", categorieRoutes);
-
 app.use("/api/plats", platRoutes);
-
 app.use("/api/events", eventRoutes);
-app.use("/api/review",reviewsRoutes);
-
+app.use("/api/reviews", reviewsRoutes);
+app.use("/api/reservations", reservationRoutes);
 
 module.exports = app;

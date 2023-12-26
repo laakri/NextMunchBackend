@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Review = require("../models/review");
+const Restaurant = require("../models/resataurant");
 
 router.post("/rating/:userId/:restoId", async (req, res) => {
   const userId = req.params.userId;
@@ -16,6 +17,14 @@ router.post("/rating/:userId/:restoId", async (req, res) => {
     });
 
     await reviewEntry.save();
+
+    // Recalculate average rating and update the restaurant
+    const reviews = await Review.find({ restoId });
+    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+    const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+
+    // Update restaurant average rating
+    await Restaurant.findByIdAndUpdate(restoId, { reviews: averageRating });
 
     res.json({ message: "Évaluation soumise avec succès." });
   } catch (error) {

@@ -1,6 +1,7 @@
 const express = require("express");
 const Restaurant = require("../models/resataurant");
 const categories = require("../models/categories");
+const User = require("../models/user");
 const router = express.Router();
 const multer = require("multer");
 const { promisify } = require("util");
@@ -47,7 +48,7 @@ router.post("/restaurants", async (req, res) => {
   try {
     const { ownerId, cin, nameR, descriptionR, location, contact, categories } =
       req.body;
-
+    console.log(req.body);
     // Create a new restaurant instance
     const newRestaurant = new Restaurant({
       ownerId,
@@ -61,6 +62,9 @@ router.post("/restaurants", async (req, res) => {
 
     // Save the restaurant to the database
     const savedRestaurant = await newRestaurant.save();
+
+    // Update the user's role to "owner"
+    await User.findByIdAndUpdate(ownerId, { $set: { "roles.0": "owner" } });
 
     // Return the created restaurant's ID in the response
     res.status(201).json({
@@ -85,14 +89,16 @@ router.get("/restaurant/:id", async (req, res) => {
   }
 });
 
-router.get('/liste-categ/:restaurantId', async (req, res) => {
+router.get("/liste-categ/:restaurantId", async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
 
-    const restaurant = await Restaurant.findById(restaurantId).populate('categories');
+    const restaurant = await Restaurant.findById(restaurantId).populate(
+      "categories"
+    );
 
     if (!restaurant) {
-      return res.status(404).json({ message: 'Restaurant not found.' });
+      return res.status(404).json({ message: "Restaurant not found." });
     }
 
     const categories = restaurant.categories;
@@ -102,33 +108,34 @@ router.get('/liste-categ/:restaurantId', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-router.get('/list', async (req, res) => {
+router.get("/list", async (req, res) => {
   try {
-    const restaurants = await Restaurant.find().populate('ownerId', 'name email');
+    const restaurants = await Restaurant.find().populate(
+      "ownerId",
+      "name email"
+    );
     res.json(restaurants);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 router.delete("/delete/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      const restaurant = await Restaurant.findById(id);
-      if (!restaurant) {
-        return res.status(404).json({ message: "Restaurant not found" });
-      }
-  
-      await Restaurant.findByIdAndDelete(id);
-  
-      res.status(200).json({ message: "Restaurant deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting restaurant", error);
-      res.status(500).json({ error: "Internal Server Error" });
+  try {
+    const { id } = req.params;
+
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
     }
-  });
 
+    await Restaurant.findByIdAndDelete(id);
 
+    res.status(200).json({ message: "Restaurant deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting restaurant", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -188,73 +195,35 @@ router.patch(
   }
 );
 
-/*
-router.get('/listRestoByCategory', async (req, res) => {
-  try {
-    const { categories } = req.query;
-
-    if (!categories || categories.length === 0) {
-      return res.status(400).json({ error: 'Categories parameter is required.' });
-    }
-
-    // Convert the categories parameter to an array if it's a string
-    const categoriesArray = Array.isArray(categories) ? categories : categories.split(',');
-
-    const query = {
-      categories: { $all: categoriesArray },
-    };
-
-    console.log('query', query);
-
-    const restaurants = await Restaurant.find(query);
-    res.json(restaurants);
-  } catch (error) {
-    console.error('Error fetching restaurants by category', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});*/
-/*
-router.get('/listRestoSearch', async (req, res) => {
-
-  const searchTerm = req.query.q;
-
-  try {
-    const results = await Restaurant.find({ nameR: { $regex: searchTerm, $options: 'i' } });
-    res.json(results);
-  } catch (error) {
-    console.error('Error searching restaurants:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-*/
-router.get('/listRestoBySearch', async (req, res) => {
+router.get("/listRestoBySearch", async (req, res) => {
   const { name, categories } = req.query;
   try {
     let query = {};
     if (name) {
-      query.nameR = { $regex: name, $options: 'i' };    }
+      query.nameR = { $regex: name, $options: "i" };
+    }
 
     if (categories && categories.length > 0) {
-      const categoriesArray = Array.isArray(categories) ? categories : categories.split(',');
+      const categoriesArray = Array.isArray(categories)
+        ? categories
+        : categories.split(",");
       query.categories = { $all: categoriesArray };
     }
 
     if (Object.keys(query).length === 0) {
-      return res.status(400).json({ error: 'Name or categories are required.' });
+      return res
+        .status(400)
+        .json({ error: "Name or categories are required." });
     }
 
-    console.log('query', query);
+    console.log("query", query);
 
     const restaurants = await Restaurant.find(query);
     res.json(restaurants);
   } catch (error) {
-    console.error('Error fetching restaurants by search', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching restaurants by search", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-
 
 module.exports = router;

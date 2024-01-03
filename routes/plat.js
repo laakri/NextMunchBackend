@@ -23,7 +23,7 @@ router.post("/plat", upload.single("imgP"), async (req, res) => {
 
     const url = req.protocol + "://" + req.get("host");
     let imgP = url + "/uploads/plat-images/" + req.file.filename;
-    const { nameP, descriptionP, categoryP, priceP } = req.body;
+    const { nameP, descriptionP, categoryP, priceP, idResto } = req.body;
 
     const newPlat = new Plat({
       nameP,
@@ -31,6 +31,7 @@ router.post("/plat", upload.single("imgP"), async (req, res) => {
       imgP,
       categoryP,
       priceP,
+      idResto
     });
 
     const savedPlat = await newPlat.save();

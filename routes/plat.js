@@ -23,7 +23,7 @@ router.post("/plat", upload.single("imgP"), async (req, res) => {
 
     const url = req.protocol + "://" + req.get("host");
     let imgP = url + "/uploads/plat-images/" + req.file.filename;
-    const { nameP, descriptionP, categoryP, priceP } = req.body;
+    const { nameP, descriptionP, categoryP, priceP, idResto } = req.body;
 
     const newPlat = new Plat({
       nameP,
@@ -31,6 +31,7 @@ router.post("/plat", upload.single("imgP"), async (req, res) => {
       imgP,
       categoryP,
       priceP,
+      idResto,
     });
 
     const savedPlat = await newPlat.save();
@@ -69,7 +70,6 @@ router.put("/plats/:id", async (req, res) => {
 
 router.get("/liste-plats/:id", async (req, res) => {
   try {
-    // Fetch all plats from the database
     const id = req.params.id;
     const plats = await Plat.findById({ idResto: id });
     // Send the list of plats as a response

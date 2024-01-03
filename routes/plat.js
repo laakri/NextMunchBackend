@@ -142,5 +142,30 @@ router.post("/setPlatHidden", async (req, res) => {
   }
 });
 
+//set a plat or  array  of plat hidden
+router.post("/setPlatUnHidden", async (req, res) => {
+  try {
+    const { platIds } = req.body;
+
+    if (!platIds) {
+      return res.status(400).json({ message: "platIds parameter is required" });
+    }
+
+    const platIdsArray = Array.isArray(platIds) ? platIds : [platIds];
+
+    const updateResult = await Plat.updateMany(
+      { _id: { $in: platIdsArray } },
+      { $set: { hidden: false } }
+    );
+
+    return res.json({
+      message: "Plats successfully set as unhidden",
+      updatedCount: updateResult.nModified,
+    });
+  } catch (error) {
+    console.error("Error in setting unhidden for plats:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 module.exports = router;

@@ -12,6 +12,7 @@ const platSchema = mongoose.Schema(
         ref: "categorie",
       },
     ],
+    idResto :{type:mongoose.Schema.Types.ObjectId, required: true, ref:"Restaurant"},
     priceP: { type: String, required: true },
     hidden: { type: Boolean, required: true, default: false },
   },

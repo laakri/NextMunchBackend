@@ -95,6 +95,7 @@ router.post("/getPlatsInfo", async (req, res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
+
 //delete an array of plat
 router.post("/deleteArrayP", async (req, res) => {
   try {
@@ -114,22 +115,25 @@ router.post("/deleteArrayP", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-//set an array of plat hidden
+
+//set a plat or  array  of plat hidden
 router.post("/setPlatHidden", async (req, res) => {
   try {
     const { platIds } = req.body;
 
-    if (!platIds || !Array.isArray(platIds)) {
-      return res.status(400).json({ message: "Invalid platIds array" });
+    if (!platIds) {
+      return res.status(400).json({ message: "platIds parameter is required" });
     }
 
+    const platIdsArray = Array.isArray(platIds) ? platIds : [platIds];
+
     const updateResult = await Plat.updateMany(
-      { _id: { $in: platIds } },
+      { _id: { $in: platIdsArray } },
       { $set: { hidden: true } }
     );
 
     return res.json({
-      message: "Plats sitten hidden ",
+      message: "Plats successfully set as hidden",
       updatedCount: updateResult.nModified,
     });
   } catch (error) {

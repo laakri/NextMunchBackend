@@ -71,7 +71,7 @@ router.put("/plats/:id", async (req, res) => {
 router.get("/liste-plats/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const plats = await Plat.findById({ idResto: id });
+    const plats = await Plat.find({ idResto: id });
     // Send the list of plats as a response
     res.status(200).json(plats);
   } catch (error) {
